@@ -1,20 +1,24 @@
-import { React, useState } from "react";
-import memeData from "../data/memeData";
-
-
+import { useState, useEffect } from "react";
 
 const Form = () => {
-    const [memeImage, setMemeImage] = useState("");
     const [meme, setMeme] = useState({
         topText: "",
         bottomText: "",
         randomImage: "http://i.imgflip.com/1bij.jpg"
     });
-    const [allMemeImages, setAllMemeImages] = useState(memeData)
+    const [allMemes, setAllMemes] = useState([])
+    const getMemes = async () => {
+        const res = await fetch("https://api.imgflip.com/get_memes")
+        const data = await res.json()
+        setAllMemes(data.data.memes)
+    }
+
+    useEffect(() => {
+        getMemes()
+    }, [])
     function getMemeImage() {
-        const memesArray = allMemeImages.data.memes
-        const randomNumber = Math.floor(Math.random() * memesArray.length)
-        const url = memesArray[randomNumber].url
+        const randomNumber = Math.floor(Math.random() * allMemes.length)
+        const url = allMemes[randomNumber].url
         setMeme(prevMeme => ({
             ...prevMeme,
             randomImage: url
@@ -33,7 +37,7 @@ const Form = () => {
                 <input
                     type="text"
                     placeholder="Top text"
-                    className="border-gray-500 outline-none"
+                    className="border-gray-500 outline-none border-2"
                     name="topText"
                     value={meme.topText}
                     onChange={handleChange}
@@ -41,7 +45,7 @@ const Form = () => {
                 <input
                     type="text"
                     placeholder="Bottom text"
-                    className="border-gray-500 outline-none"
+                    className="border-gray-500 outline-none border-2"
                     name="bottomText"
                     value={meme.bottomText}
                     onChange={handleChange}
@@ -51,10 +55,13 @@ const Form = () => {
             <div className="bg-dark flex flex-col justify-center text-white">
                 <button onClick={getMemeImage}>Get a new meme image  🖼</button>
             </div>
-            <img className="" src={meme.randomImage} alt="" />
-            <h2 className="meme--text top">{meme.topText}</h2>
-            <h2 className="meme--text bottom">{meme.bottomText}</h2>
-        </div>
+            <div className="relative">
+                <img className="" src={meme.randomImage} alt="" />
+                <h2 className="absolute top-0 left-44 text-2xl text-white">{meme.topText}</h2>
+                <h2 className="absolute bottom-0 left-44 text-2xl text-white">{meme.bottomText}</h2>
+            </div>
+
+        </div >
     )
 }
 

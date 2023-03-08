@@ -1,7 +1,3 @@
-import React from "react";
-import { ReactDOM } from "react";
-
-
 const NavBar = () => {
     return (
         <div className="flex items-center justify-between bg-dark px-5 text-white">
